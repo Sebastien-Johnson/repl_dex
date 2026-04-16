@@ -1,7 +1,7 @@
 package main
 
 import (
-	"testing";
+	"testing"
 )
 
 func TestCleanInput(t *testing.T) {
@@ -26,11 +26,15 @@ func TestCleanInput(t *testing.T) {
 	//loop over cases and run them all
 	for _, c := range cases {
 		actual := cleanInput(c.input)
+		if len(actual) != len(c.expected) {
+			t.Errorf("lengths dont match: %v vs %v", actual, c.expected)
+			continue
+		}
 		for i := range actual {
 			word := actual[i]
 			expectedWord := c.expected[i]
 			if word != expectedWord {
-				return 
+				t.Errorf("cleanInput(%v) == %v, expected %v", c.input, actual, c.expected)
 			}
 		}
 	}
