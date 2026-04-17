@@ -33,5 +33,5 @@ go.work.sum
 
 #executable
 repl_dex
-notes
+notes.md
 repl.log
