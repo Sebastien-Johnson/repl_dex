@@ -17,3 +17,7 @@ go tests:
     - print names from map literals to locate test easier
     - use subtests to keep testing running after a failure
     - using '%#v' makes spotting string errors easier
+
+Using the poke api
+-get json data and organize in Jlint
+-create struct from data with json-to-go
