@@ -1,6 +1,6 @@
 package pokeapi
 
-//location struct from jlint + json to go
+//location area response struct from jlint + json to go
 type LocationAreasResp struct {
 	Count    int    `json:"count"`
 	Next     *string   `json:"next"`

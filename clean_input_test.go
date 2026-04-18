@@ -5,6 +5,7 @@ import (
 )
 
 func TestCleanInput(t *testing.T) {
+	//create testing struct
 	cases := []struct {
 		input  string
 		expected []string
@@ -25,11 +26,14 @@ func TestCleanInput(t *testing.T) {
 	}
 	//loop over cases and run them all
 	for _, c := range cases {
+		//clean the input
 		actual := cleanInput(c.input)
+		//verify by length
 		if len(actual) != len(c.expected) {
 			t.Errorf("lengths dont match: %v vs %v", actual, c.expected)
 			continue
 		}
+		//compare each word in input to expected
 		for i := range actual {
 			word := actual[i]
 			expectedWord := c.expected[i]

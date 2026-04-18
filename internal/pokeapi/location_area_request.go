@@ -7,7 +7,8 @@ import (
 	"fmt"
 )
 
-// takes client, returns location are
+// takes client, returns location area response struct and error
+//c == client struct
 func (c *Client) ListLocationAreas() (LocationAreasResp, error) {
 	//combine endpoint with const base url
 	endpoint := "/location-area"
