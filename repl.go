@@ -7,8 +7,8 @@ import (
 	"strings"
 )
 
-//input and command data
-func startRepl() {
+//input and command data, passes const config
+func startRepl(cfg *config) {
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Println(("Pokedex > "))
@@ -24,7 +24,7 @@ func startRepl() {
 		//access command in command map via name-index
 		command, exists := getCommands()[commandName]
 		if exists { // if exists and checks for error
-			err := command.callback()
+			err := command.callback(cfg)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -43,11 +43,11 @@ func cleanInput(text string) []string {
 }
 
 
-// form struct for command data
+// form struct for command data, set callbacks to accept config
 type cliCommand struct {
 	name string
 	description string
-	callback func() error 
+	callback func(*config) error 
 }
 
 //function that returns map with string:struct pairs that contains callback to funcs, accepts string and returns cli command structs
@@ -68,11 +68,11 @@ func getCommands() map[string]cliCommand {
 			description: "List location areas",
 			callback: commandMap,
 		},
-		// "mapb": {
-		// 	name: "mapb",
-		// 	description: "Displays previous 20 area names",
-		// 	callback: commandMapb,
-		//},
+		"mapb": {
+			name: "mapb",
+			description: "Displays previous 20 area names",
+			callback: commandMapb,
+		},
 	}
 }
 	

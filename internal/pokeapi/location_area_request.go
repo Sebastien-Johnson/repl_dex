@@ -9,10 +9,15 @@ import (
 
 // takes client, returns location area response struct and error
 //c == client struct
-func (c *Client) ListLocationAreas() (LocationAreasResp, error) {
+func (c *Client, ) ListLocationAreas(pageUrl *string) (LocationAreasResp, error) {
 	//combine endpoint with const base url
-	endpoint := "/location-area"
-	fullUrl := baseUrl+endpoint
+	fullUrl := ""
+	if pageUrl == nil {
+		endpoint := "/location-area"
+		fullUrl = baseUrl+endpoint
+	} else {
+		fullUrl = *pageUrl
+	}
 
 	// get request with NewRequest, no body
 	req, err := http.NewRequest("GET", fullUrl, nil)
