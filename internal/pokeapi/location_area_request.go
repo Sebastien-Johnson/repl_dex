@@ -11,13 +11,29 @@ import (
 //c == client struct
 func (c *Client, ) ListLocationAreas(pageUrl *string) (LocationAreasResp, error) {
 	//combine endpoint with const base url
-	fullUrl := ""
-	if pageUrl == nil {
-		endpoint := "/location-area"
-		fullUrl = baseUrl+endpoint
-	} else {
+	endpoint := "/location-area"
+	fullUrl := baseUrl+endpoint
+
+	if pageUrl != nil {
 		fullUrl = *pageUrl
+	} 
+
+	//check the cache
+	dat, ok := c.cache.Get(fullUrl)
+	if ok {
+		//cache hits
+		//create empty var for json response
+		fmt.Println("cache hit!")
+		locationAreasResp := LocationAreasResp{}
+		//check json data for error and/or write to pointer to var
+		err1 := json.Unmarshal(dat, &locationAreasResp)
+		if err1 != nil {
+			return LocationAreasResp{}, err1
+		}
+		//returns valid location area and nil error early
+		return locationAreasResp, nil
 	}
+	fmt.Println("cache miss!")
 
 	// get request with NewRequest, no body
 	req, err := http.NewRequest("GET", fullUrl, nil)
@@ -49,10 +65,12 @@ func (c *Client, ) ListLocationAreas(pageUrl *string) (LocationAreasResp, error)
 	//create empty var for json response
 	locationAreasResp := LocationAreasResp{}
 	//check json data for error and/or write to pointer to var
-	err1 := json.Unmarshal(data, &locationAreasResp)
-	if err1 != nil {
-		return LocationAreasResp{}, err1
+	err2 := json.Unmarshal(data, &locationAreasResp)
+	if err2 != nil {
+		return LocationAreasResp{}, err2
 	}
+	//adds new valid fullUrl to cache
+	c.cache.Add(fullUrl, dat)
 	//returns valid location area and nil error
 	return locationAreasResp, nil
 }

@@ -8,8 +8,6 @@ import (
 func commandMap(cfg *config) error {
 	//create new client from constructor via cfg
 	//get resp and err from location area 
-	// endpoint := fmt.Sprintf("/location-area?offset=%v&limit=20", cfg.endpointIndex)
-	// cfg.endpointIndex += 20
 	resp, err := cfg.pokeapiClient.ListLocationAreas(cfg.nextLocationAreaUrl)
 	//check for errors
 	if err != nil {

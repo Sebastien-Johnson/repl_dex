@@ -21,3 +21,10 @@ go tests:
 Using the poke api
 -get json data and organize in Jlint
 -create struct from data with json-to-go
+
+mutexs
+-"Mutual exclusion"
+-Allows simultaneous go runtimes
+-Functions "lock" the mutex before reading/writing it which prevents it from be accessed by other threads
+-Function unlocks it once done, allowing access by other threads
+-RWMutex (read/write mutex), allows concurrent reading (not read/write or write/write) by using and RLock method when running
