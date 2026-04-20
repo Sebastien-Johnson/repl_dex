@@ -12,7 +12,7 @@ func TestCleanInput(t *testing.T) {
 	}{
 		{//test case
 			input: " hello world ",
-			expected: []string{"hello", "wolrd"},
+			expected: []string{"hello", "world"},
 		},
 		{
 			input: "does this even work?",

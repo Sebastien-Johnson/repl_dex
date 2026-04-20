@@ -5,7 +5,17 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/sebastien-johnson/repl_dex/internal/pokeapi"
 )
+
+type config struct {
+	//allows efficient re-use of client
+	pokeapiClient 		pokeapi.Client
+	nextLocationAreaUrl *string
+	prevLocationAreaUrl *string
+	//pointer allows it to be 'nil' when non exist
+}
 
 //input and command data, passes const config
 func startRepl(cfg *config) {
@@ -21,10 +31,16 @@ func startRepl(cfg *config) {
 		}
 		//grab first word from cleaned input
 		commandName := input[0]
+		areaName := ""
+		if len(input) > 1 {
+			areaName = input[1]
+		}
+		
 		//access command in command map via name-index
 		command, exists := getCommands()[commandName]
+
 		if exists { // if exists and checks for error
-			err := command.callback(cfg)
+			err := command.callback(cfg, &areaName)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -47,7 +63,7 @@ func cleanInput(text string) []string {
 type cliCommand struct {
 	name string
 	description string
-	callback func(*config) error 
+	callback func(*config, *string) error 
 }
 
 //function that returns map with string:struct pairs that contains callback to funcs, accepts string and returns cli command structs
@@ -66,12 +82,17 @@ func getCommands() map[string]cliCommand {
 		"map": {
 			name: "map",
 			description: "List location areas",
-			callback: commandMap,
+			callback: commandMap, //callback
 		},
 		"mapb": {
 			name: "mapb",
 			description: "Displays previous 20 area names",
-			callback: commandMapb,
+			callback: commandMapb, //callback
+		},
+		"explore": {
+			name: "explore",
+			description: "Shows pokemon in a given area",
+			callback: commandExplore,
 		},
 	}
 }

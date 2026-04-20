@@ -11,24 +11,23 @@ import (
 //c == client struct
 func (c *Client, ) ListLocationAreas(pageUrl *string) (LocationAreasResp, error) {
 	//combine endpoint with const base url
-	endpoint := "/location-area"
+	endpoint := "location-area"
 	fullUrl := baseUrl+endpoint
+	
 
 	if pageUrl != nil {
 		fullUrl = *pageUrl
 	} 
 
-	//check the cache
-	dat, ok := c.cache.Get(fullUrl)
-	if ok {
-		//cache hits
-		//create empty var for json response
+	//check if fullUrl data is in cache
+	if dat, ok := c.cache.Get(fullUrl) ; ok{
 		fmt.Println("cache hit!")
+		//create empty var for json response
 		locationAreasResp := LocationAreasResp{}
 		//check json data for error and/or write to pointer to var
-		err1 := json.Unmarshal(dat, &locationAreasResp)
-		if err1 != nil {
-			return LocationAreasResp{}, err1
+		err := json.Unmarshal(dat, &locationAreasResp)
+		if err != nil {
+			return LocationAreasResp{}, err
 		}
 		//returns valid location area and nil error early
 		return locationAreasResp, nil
@@ -51,11 +50,6 @@ func (c *Client, ) ListLocationAreas(pageUrl *string) (LocationAreasResp, error)
 	//close resp body obj
 	defer resp.Body.Close()
 
-	//check status code
-	if resp.StatusCode >299 {
-		return LocationAreasResp{}, fmt.Errorf("Response failed with status code: %d", resp.StatusCode)
-	}
-
 	//read through json data
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -65,12 +59,12 @@ func (c *Client, ) ListLocationAreas(pageUrl *string) (LocationAreasResp, error)
 	//create empty var for json response
 	locationAreasResp := LocationAreasResp{}
 	//check json data for error and/or write to pointer to var
-	err2 := json.Unmarshal(data, &locationAreasResp)
-	if err2 != nil {
-		return LocationAreasResp{}, err2
+	err = json.Unmarshal(data, &locationAreasResp)
+	if err != nil {
+		return LocationAreasResp{}, err
 	}
 	//adds new valid fullUrl to cache
-	c.cache.Add(fullUrl, dat)
+	c.cache.Add(fullUrl, data)
 	//returns valid location area and nil error
 	return locationAreasResp, nil
 }

@@ -10,7 +10,7 @@ import (
 
 type Cache struct{
 	cache map[string]cacheEntry
-	mu sync.RWMutex
+	mux *sync.Mutex
 }
 
 type cacheEntry struct {
@@ -21,50 +21,45 @@ type cacheEntry struct {
 func NewCache(interval time.Duration) Cache {
 	c := Cache{
 		cache : make(map[string]cacheEntry),
+		mux : &sync.Mutex{},
 	}
-	//clears cache on interval
 	go c.ReapLoop(interval)
 	return c
-	// mux := &sync.RWMutex{}
-
-	// go c.ReapLoop(interval, mux)
-	// return c
-
 }
 
 func (c *Cache) Add(key string, val []byte) { // , mux * sync.RWMutex
-	// mux.Lock()
+	c.mux.Lock()
+	defer c.mux.Unlock()
 	c.cache[key] = cacheEntry{
-		val: val, 
 		createdAt: time.Now().UTC(),
+		val: val, 
 	}
-	// mux.Unlock()
 }
 
 func (c *Cache) Get(key string,) ([]byte, bool) {  //mux * sync.RWMutex
-	// mux.RLock()
+	c.mux.Lock()
+	defer c.mux.Unlock()
 	entry, ok := c.cache[key]
-	// mux.RUnlock()
 	return entry.val, ok
 } 
 
+//always running, checking if time to reap
 func (c *Cache) ReapLoop(interval time.Duration) { //, mux * sync.RWMutex
-		ticker := time.NewTicker((interval))
+		ticker := time.NewTicker(interval)
 		for range ticker.C {
-			c.reap(interval)
+			c.reap(time.Now().UTC(), interval)
 		}
 }
 
 //deletes all old cache entries
-func (c *Cache) reap(interval time.Duration) {
-	timeCutoff := time.Now().UTC().Add(-interval)
-	//mux.Lock()
+func (c *Cache) reap(now time.Time, timeCutoff time.Duration) {
+	c.mux.Lock()
+	defer c.mux.Unlock()
 	for k, v := range c.cache {
-		if v.createdAt.Before(timeCutoff) {
+		if v.createdAt.Before(now.Add(-timeCutoff)) {
 			delete(c.cache, k)
 		}
 	}
-	//mux.Unlock()
 }
 
 
