@@ -4,22 +4,23 @@ import (
 	"encoding/json"
 	"net/http"
 	"io"
+	
 )
 
-func (c *Client) ListAreaDetails(areaName *string) (areaDetails, error) {
-	fullUrl := baseUrl + *areaName
+func (c *Client) ListPokemonDetails(pageUrl *string) (PokemonDetailsResp, error) {
+	fullUrl := baseUrl + *pageUrl
 
 	if dat, ok := c.cache.Get(fullUrl) ; ok{
 		// fmt.Println("cache hit!")
 		//create empty var for json response
-		areaDetailsResp := areaDetails{}
+		pokemonDetailsResp := PokemonDetailsResp{}
 		//check json data for error and/or write to pointer to var
-		err := json.Unmarshal(dat, &areaDetailsResp)
+		err := json.Unmarshal(dat, &pokemonDetailsResp)
 		if err != nil {
-			return areaDetails{}, err
+			return PokemonDetailsResp{}, err
 		}
 		//returns valid location area and nil error early
-		return areaDetailsResp, nil
+		return pokemonDetailsResp, nil
 	}
 	// fmt.Println("cache miss!")
 
@@ -27,14 +28,14 @@ func (c *Client) ListAreaDetails(areaName *string) (areaDetails, error) {
 	req, err := http.NewRequest("GET", fullUrl, nil)
 	if err != nil{
 		//return empty location area & error
-		return areaDetails{}, err
+		return PokemonDetailsResp{}, err
 	}
 	//now request is verfied/valid
 
 	//.Do(req) executes request, and gets http resp
 	resp, err := c.httpClient.Do(req)
 	if err != nil{
-		return areaDetails{}, err
+		return PokemonDetailsResp{}, err
 	}
 
 	//close resp body obj by default
@@ -43,18 +44,18 @@ func (c *Client) ListAreaDetails(areaName *string) (areaDetails, error) {
 	//read through json data
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return areaDetails{}, err
+		return PokemonDetailsResp{}, err
 	}
 	
 	//create empty var for json response
-	areaDetailsResp := areaDetails{}
+	pokemonDetailsResp := PokemonDetailsResp{}
 	//check json data for error and/or write to pointer to var
-	err = json.Unmarshal(data, &areaDetailsResp)
+	err = json.Unmarshal(data, &pokemonDetailsResp)
 	if err != nil {
-		return areaDetails{}, err
+		return PokemonDetailsResp{}, err
 	}
 	//adds new valid fullUrl to cache
 	c.cache.Add(fullUrl, data)
 	//returns valid location area and nil error
-	return areaDetailsResp, nil
+	return pokemonDetailsResp, nil
 }

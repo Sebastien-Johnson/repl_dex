@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"net/http"
 	"io"
-	"fmt"
+	
 )
 
 // takes client, returns location area response struct and error
 //c == client struct
-func (c *Client, ) ListLocationAreas(pageUrl *string) (LocationAreasResp, error) {
+func (c *Client) ListLocationAreas(pageUrl *string) (LocationAreasResp, error) {
 	//combine endpoint with const base url
 	endpoint := "location-area"
 	fullUrl := baseUrl+endpoint
@@ -21,7 +21,7 @@ func (c *Client, ) ListLocationAreas(pageUrl *string) (LocationAreasResp, error)
 
 	//check if fullUrl data is in cache
 	if dat, ok := c.cache.Get(fullUrl) ; ok{
-		fmt.Println("cache hit!")
+		// fmt.Println("cache hit!")
 		//create empty var for json response
 		locationAreasResp := LocationAreasResp{}
 		//check json data for error and/or write to pointer to var
@@ -32,7 +32,7 @@ func (c *Client, ) ListLocationAreas(pageUrl *string) (LocationAreasResp, error)
 		//returns valid location area and nil error early
 		return locationAreasResp, nil
 	}
-	fmt.Println("cache miss!")
+	// fmt.Println("cache miss!")
 
 	// get request with NewRequest, no body
 	req, err := http.NewRequest("GET", fullUrl, nil)

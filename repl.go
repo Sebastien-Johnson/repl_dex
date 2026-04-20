@@ -14,6 +14,7 @@ type config struct {
 	pokeapiClient 		pokeapi.Client
 	nextLocationAreaUrl *string
 	prevLocationAreaUrl *string
+	pokemonCaught  map[string]pokeapi.PokemonDetailsResp
 	//pointer allows it to be 'nil' when non exist
 }
 
@@ -23,7 +24,7 @@ func startRepl(cfg *config) {
 	for {
 		fmt.Println(("Pokedex > "))
 		scanner.Scan()
-
+		fmt.Print("\n")
 		input := cleanInput(scanner.Text())
 		//check for empty input
 		if len(input) == 0 {
@@ -94,7 +95,21 @@ func getCommands() map[string]cliCommand {
 			description: "Shows pokemon in a given area",
 			callback: commandExplore,
 		},
+		"catch": {
+			name: "catch",
+			description: "Attempts to catch given pokemon",
+			callback: commandCatch,
+		},
+		"inspect": {
+			name: "inspect",
+			description: "Displays given pokemon's stats",
+			callback: commandInspect,
+		},
+		"pokedex": {
+			name: "pokedex",
+			description: "Displays all caught pokemon",
+			callback: commandPokedex,
+		},
+
 	}
 }
-	
-
